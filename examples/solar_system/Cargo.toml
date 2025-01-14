@@ -2,9 +2,12 @@
 name = "solar_system"
 version = "0.1.0"
 authors = ["Héctor Ramón Jiménez <hector0193@gmail.com>"]
-edition = "2018"
+edition = "2021"
 publish = false
 
 [dependencies]
-iced = { path = "../..", features = ["canvas", "tokio", "debug"] }
+iced.workspace = true
+iced.features = ["debug", "canvas", "image", "tokio"]
+
 rand = "0.8.3"
+tracing-subscriber = "0.3"

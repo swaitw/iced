@@ -1,38 +1,57 @@
-use iced::{Container, Element, Length, Sandbox, Settings, Svg};
+use iced::widget::{center, checkbox, column, container, svg};
+use iced::{color, Element, Fill};
 
 pub fn main() -> iced::Result {
-    Tiger::run(Settings::default())
+    iced::run("SVG - Iced", Tiger::update, Tiger::view)
 }
 
-struct Tiger;
+#[derive(Debug, Default)]
+struct Tiger {
+    apply_color_filter: bool,
+}
 
-impl Sandbox for Tiger {
-    type Message = ();
+#[derive(Debug, Clone, Copy)]
+pub enum Message {
+    ToggleColorFilter(bool),
+}
 
-    fn new() -> Self {
-        Tiger
+impl Tiger {
+    fn update(&mut self, message: Message) {
+        match message {
+            Message::ToggleColorFilter(apply_color_filter) => {
+                self.apply_color_filter = apply_color_filter;
+            }
+        }
     }
 
-    fn title(&self) -> String {
-        String::from("SVG - Iced")
-    }
-
-    fn update(&mut self, _message: ()) {}
-
-    fn view(&mut self) -> Element<()> {
-        let svg = Svg::from_path(format!(
+    fn view(&self) -> Element<Message> {
+        let handle = svg::Handle::from_path(format!(
             "{}/resources/tiger.svg",
             env!("CARGO_MANIFEST_DIR")
-        ))
-        .width(Length::Fill)
-        .height(Length::Fill);
+        ));
 
-        Container::new(svg)
-            .width(Length::Fill)
-            .height(Length::Fill)
-            .padding(20)
-            .center_x()
-            .center_y()
-            .into()
+        let svg =
+            svg(handle)
+                .width(Fill)
+                .height(Fill)
+                .style(|_theme, _status| svg::Style {
+                    color: if self.apply_color_filter {
+                        Some(color!(0x0000ff))
+                    } else {
+                        None
+                    },
+                });
+
+        let apply_color_filter =
+            checkbox("Apply a color filter", self.apply_color_filter)
+                .on_toggle(Message::ToggleColorFilter);
+
+        center(
+            column![svg, container(apply_color_filter).center_x(Fill)]
+                .spacing(20)
+                .height(Fill),
+        )
+        .padding(20)
+        .into()
     }
 }
