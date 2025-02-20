@@ -1,12 +1,14 @@
 //! Listen and react to time.
-use crate::Subscription;
+pub use crate::core::time::*;
 
-/// Returns a [`Subscription`] that produces messages at a set interval.
-///
-/// The first message is produced after a `duration`, and then continues to
-/// produce more messages every `duration` after that.
-pub fn every(
-    duration: std::time::Duration,
-) -> Subscription<std::time::Instant> {
-    iced_futures::time::every(duration)
-}
+#[allow(unused_imports)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(
+        feature = "tokio",
+        feature = "async-std",
+        feature = "smol",
+        target_arch = "wasm32"
+    )))
+)]
+pub use iced_futures::backend::default::time::*;
